@@ -5,135 +5,50 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Code from './Code'
+import csharp from './lang/csharp'
+import go from './lang/go'
+import javascript from './lang/javascript'
+
+const getCode = (concept, language) => {
+	let lang;
+	if (language === "csharp") lang = csharp;
+	if (language === "go") lang = go;
+	if (language === "javascript") lang = javascript;
+
+	const code = lang.get(concept).map((item) =>
+		<Card.Body>
+			<Code title={item.title}
+				code={item.code}
+				language={language} />
+		</Card.Body>
+	)
+	return code
+}
 
 function App() {
+	const concepts = ["constant", "variable", "for"]
+	const languages = ["csharp", "go", "javascript"]
+	const listItems = concepts.map((concept) =>
+		<Card className="mt-4">
+			<Card.Header as="h5">{concept}</Card.Header>
+			<Card.Body>
+				<Row>
+					{languages.map((language) =>
+						<Col>
+							<Card>
+								<Card.Header className="text-center" as="h5">{language}</Card.Header>
+								{getCode(concept, language)}
+							</Card>
+						</Col>
+					)}
+				</Row>
+			</Card.Body>
+		</Card>
+	);
 	return (
 		<div className="App">
 			<Container>
-				<Card className="mt-4">
-					<Card.Header as="h5">Объявление константы</Card.Header>
-					<Card.Body>
-						<Row>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">C#</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`const int i = 42;`}
-											language="csharp" />
-									</Card.Body>
-								</Card>
-							</Col>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">Go</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`const i = 42`}
-											language="go" />
-									</Card.Body>
-								</Card>
-							</Col>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">JavaScript</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`const i = 42`}
-											language="javascript" />
-									</Card.Body>
-								</Card>
-							</Col>
-						</Row>
-					</Card.Body>
-				</Card>
-				<Card className="mt-4">
-					<Card.Header as="h5">Объявление переменной</Card.Header>
-					<Card.Body>
-						<Row>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">C#</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`int i = 42;`}
-											language="csharp" />
-									</Card.Body>
-								</Card>
-							</Col>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">Go</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`var i int = 42`}
-											language="go" />
-										<Code title=""
-											code={`i := 42`}
-											language="go" />
-									</Card.Body>
-								</Card>
-							</Col>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">JavaScript</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`var i = 42`}
-											language="javascript" />
-											<Code title="С блочной областью видимости:"
-											code={`let i = 42`}
-											language="javascript" />
-									</Card.Body>
-								</Card>
-							</Col>
-						</Row>
-					</Card.Body>
-				</Card>
-				<Card className="mt-4">
-					<Card.Header as="h5">Цикл for</Card.Header>
-					<Card.Body>
-						<Row>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">C#</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`for (int i = 0; i < 10; i++)
-{
-	// some code
-}`}
-											language="csharp" />
-									</Card.Body>
-								</Card>
-							</Col>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">Go</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`for i := 0; i < 10; i++ {
-	// some code
-}`}
-											language="go" />
-									</Card.Body>
-								</Card>
-							</Col>
-							<Col>
-								<Card>
-									<Card.Header class="text-center" as="h5">JavaScript</Card.Header>
-									<Card.Body>
-										<Code title=""
-											code={`for (var i = 0; i < 10; i++) {
-	// some code
-}`}
-											language="javascript" />
-									</Card.Body>
-								</Card>
-							</Col>
-						</Row>
-					</Card.Body>
-				</Card>
+				{listItems}
 			</Container>
 		</div>
 	);
