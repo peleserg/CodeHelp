@@ -1,10 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useRef } from "react";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Code from './Code'
+import { X } from 'react-bootstrap-icons';
 import csharp from './lang/csharp'
 import go from './lang/go'
 import javascript from './lang/javascript'
@@ -28,11 +31,11 @@ const getCode = (concept, language) => {
 	return code
 }
 
-function App() {
-	const concepts = ["constant", "variable", "for", "bitwise-xor", "array-size", "array-add", "array-remove", "array-includes", "array-index-of"]
+const getConcepts = (conceptGroup, filter) => {
 	const languages = ["csharp", "go", "javascript"]
-	const listItems = concepts.map((concept) =>
-		<Card className="mt-3">
+	const concepts = conceptGroup.map((concept) =>
+		(filter && concept.includes(filter)) || !filter ?
+		<Card className="mt-1">
 			<Card.Header as="h5">{concept}</Card.Header>
 			<Card.Body>
 				<Row>
@@ -47,10 +50,51 @@ function App() {
 				</Row>
 			</Card.Body>
 		</Card>
+		: null
+	);
+	return concepts
+}
+
+const getConceptNumber = (conceptGroup, sPhrase) => {
+	const concepts = conceptGroup.filter(concept => concept.includes(sPhrase))
+	return concepts.length
+}
+
+function App() {
+	const [showClearButton, setShowClearButton] = useState(false);
+	const [searchPhrase, setSearchPhrase] = useState("");
+	const inputEl = useRef(null);
+	const allConceptGroups = new Map()
+	allConceptGroups.set("definition", ["constant", "variable"])
+	allConceptGroups.set("loop", ["for"])
+	allConceptGroups.set("bitwise", ["bitwise-xor"])
+	allConceptGroups.set("array", ["array-length", "array-add", "array-remove", "array-includes", "array-index-of"])
+	const conceptGroups = ["definition", "loop", "bitwise", "array"]
+	
+	const listItems = conceptGroups.map((conceptGroup) =>
+		conceptGroup.includes(searchPhrase) || getConceptNumber(allConceptGroups.get(conceptGroup), searchPhrase) > 0 ?
+		<Card className="mt-3">
+			<Card.Header as="h5">{conceptGroup}</Card.Header>
+			<Card.Body>
+				{getConcepts(allConceptGroups.get(conceptGroup), conceptGroup.includes(searchPhrase) ? "" : searchPhrase)}
+			</Card.Body>
+		</Card>
+		: null
 	);
 	return (
 		<div className="App">
 			<Container>
+				<div style={{ position: "relative" }}
+					onMouseEnter={(e) => setShowClearButton(searchPhrase !== "")}
+					onMouseLeave={(e) => setShowClearButton(false)}>
+					<Form.Control ref={inputEl} value={searchPhrase} onChange={e => setSearchPhrase(e.target.value)} className="mt-3" type="text" placeholder="Search..." />
+					{showClearButton && <Button variant="outline-secondary"
+						onClick={() => { setSearchPhrase("") }}
+						style={{ position: "absolute", top: "0rem", right: "0rem" }}>
+						<X />
+					</Button>
+					}
+				</div>
 				{listItems}
 			</Container>
 		</div>

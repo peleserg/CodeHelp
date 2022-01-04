@@ -13,7 +13,7 @@ CodeDef.set("for", [{title: "", code:
 	// some code
 }`}]);
 
-CodeDef.set("array-size", [{title: "", code: 
+CodeDef.set("array-length", [{title: "", code: 
 `arr.length`}]);
 
 CodeDef.set("array-add", [{title: "", code: 

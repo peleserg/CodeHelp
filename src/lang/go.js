@@ -16,7 +16,7 @@ CodeDef.set("for", [{title: "", code:
 CodeDef.set("bitwise-xor", [{title: "", code: 
 `i := 2 ^ 3`}]);
 
-CodeDef.set("array-size", [{title: "", code: 
+CodeDef.set("array-length", [{title: "", code: 
 `len(arr)`}]);
 
 export default CodeDef

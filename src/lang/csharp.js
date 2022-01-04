@@ -12,7 +12,7 @@ CodeDef.set("for", [{title: "", code:
 	// some code
 }`}]);
 
-CodeDef.set("array-size", [{title: "", code: 
+CodeDef.set("array-length", [{title: "", code: 
 `arr.Length`}]);
 
 export default CodeDef
