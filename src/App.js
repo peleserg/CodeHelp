@@ -15,8 +15,11 @@ const getCode = (concept, language) => {
 	if (language === "go") lang = go;
 	if (language === "javascript") lang = javascript;
 
+	if (!lang.has(concept))
+		return null
+
 	const code = lang.get(concept).map((item) =>
-		<Card.Body>
+		<Card.Body style={{paddingTop: "0.5rem", paddingBottom: "0.5rem"}}>
 			<Code title={item.title}
 				code={item.code}
 				language={language} />
@@ -26,10 +29,10 @@ const getCode = (concept, language) => {
 }
 
 function App() {
-	const concepts = ["constant", "variable", "for"]
+	const concepts = ["constant", "variable", "for", "bitwise-xor", "array-size", "array-add", "array-remove", "array-includes", "array-index-of"]
 	const languages = ["csharp", "go", "javascript"]
 	const listItems = concepts.map((concept) =>
-		<Card className="mt-4">
+		<Card className="mt-3">
 			<Card.Header as="h5">{concept}</Card.Header>
 			<Card.Body>
 				<Row>
