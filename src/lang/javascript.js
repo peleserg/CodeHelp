@@ -5,7 +5,7 @@ CodeDef.set("constant", [{title: "", code:
 
 CodeDef.set("variable", [{title: "", code: 
 `var i = 42`},
-{title: "С блочной областью видимости:", code: 
+{title: "javascript-variable-let", code: 
 `let i = 42`}]);
 
 CodeDef.set("for", [{title: "", code: 

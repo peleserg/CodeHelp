@@ -11,8 +11,25 @@ import { X } from 'react-bootstrap-icons';
 import csharp from './lang/csharp'
 import go from './lang/go'
 import javascript from './lang/javascript'
+import { TrConceptGroups, TrConcepts, TrCodeDescriptions } from './translate'
 
-const getCode = (concept, language) => {
+const Translate = (source, text, translation) => {
+	if (!source.has(text))
+		return text
+	const destTranslation = source.get(text)[translation]
+	if (destTranslation !== undefined) {
+		return destTranslation
+	} else {
+		const enTranslation = source.get(text)["en"]
+		if (enTranslation !== undefined) {
+			return enTranslation
+		} else {
+			return text
+		}
+	}
+}
+
+const getCode = (concept, language, translation) => {
 	let lang;
 	if (language === "csharp") lang = csharp;
 	if (language === "go") lang = go;
@@ -23,7 +40,7 @@ const getCode = (concept, language) => {
 
 	const code = lang.get(concept).map((item) =>
 		<Card.Body style={{paddingTop: "0.5rem", paddingBottom: "0.5rem"}}>
-			<Code title={item.title}
+			<Code title={Translate(TrCodeDescriptions, item.title, translation)}
 				code={item.code}
 				language={language} />
 		</Card.Body>
@@ -31,19 +48,19 @@ const getCode = (concept, language) => {
 	return code
 }
 
-const getConcepts = (conceptGroup, filter) => {
+const getConcepts = (conceptGroup, filter, translation) => {
 	const languages = ["csharp", "go", "javascript"]
 	const concepts = conceptGroup.map((concept) =>
 		(filter && concept.includes(filter)) || !filter ?
 		<Card className="mt-1">
-			<Card.Header as="h5">{concept}</Card.Header>
+			<Card.Header as="h5">{Translate(TrConcepts, concept, translation)}</Card.Header>
 			<Card.Body>
 				<Row>
 					{languages.map((language) =>
 						<Col>
 							<Card>
 								<Card.Header className="text-center" as="h5">{language}</Card.Header>
-								{getCode(concept, language)}
+								{getCode(concept, language, translation)}
 							</Card>
 						</Col>
 					)}
@@ -61,8 +78,13 @@ const getConceptNumber = (conceptGroup, sPhrase) => {
 }
 
 function App() {
+
+	// TODO synonims for search (remove=delete), good-looking lang names (C#)
+	// TODO search in translations
+
 	const [showClearButton, setShowClearButton] = useState(false);
 	const [searchPhrase, setSearchPhrase] = useState("");
+	const [translation, setTranslation] = useState("ru");
 	const inputEl = useRef(null);
 	const allConceptGroups = new Map()
 	allConceptGroups.set("definition", ["constant", "variable"])
@@ -74,9 +96,9 @@ function App() {
 	const listItems = conceptGroups.map((conceptGroup) =>
 		conceptGroup.includes(searchPhrase) || getConceptNumber(allConceptGroups.get(conceptGroup), searchPhrase) > 0 ?
 		<Card className="mt-3">
-			<Card.Header as="h5">{conceptGroup}</Card.Header>
+			<Card.Header as="h5">{Translate(TrConceptGroups, conceptGroup, translation)}</Card.Header>
 			<Card.Body>
-				{getConcepts(allConceptGroups.get(conceptGroup), conceptGroup.includes(searchPhrase) ? "" : searchPhrase)}
+				{getConcepts(allConceptGroups.get(conceptGroup), conceptGroup.includes(searchPhrase) ? "" : searchPhrase, translation)}
 			</Card.Body>
 		</Card>
 		: null
