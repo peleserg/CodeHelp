@@ -17,3 +17,16 @@ TrConcepts.set("array-index-of", {en: "Element index"})
 
 export const TrCodeDescriptions = new Map()
 TrCodeDescriptions.set("javascript-variable-let", {en: "Block scope", ru: "С блочной областью видимости"})
+
+export const TrInterface = new Map()
+TrInterface.set("settings", {en: "Settings", ru: "Настройки"})
+TrInterface.set("search", {en: "Search...", ru: "Поиск..."})
+TrInterface.set("languages", {en: "Programming languages", ru: "Языки программирования"})
+TrInterface.set("translation", {en: "Translation", ru: "Язык интерфейса"})
+TrInterface.set("en", {en: "English", ru: "Английский"})
+TrInterface.set("ru", {en: "Russian", ru: "Русский"})
+
+export const TrLanguages = new Map()
+TrLanguages.set("csharp", {en: "C#"})
+TrLanguages.set("go", {en: "Go"})
+TrLanguages.set("javascript", {en: "JavaScript"})

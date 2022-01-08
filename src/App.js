@@ -1,17 +1,19 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useRef } from "react";
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Offcanvas from 'react-bootstrap/Offcanvas';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Stack from 'react-bootstrap/Stack';
 import Code from './Code'
-import { X } from 'react-bootstrap-icons';
+import { X, Gear } from 'react-bootstrap-icons';
 import csharp from './lang/csharp'
 import go from './lang/go'
 import javascript from './lang/javascript'
-import { TrConceptGroups, TrConcepts, TrCodeDescriptions } from './translate'
+import { TrConceptGroups, TrConcepts, TrCodeDescriptions, TrInterface, TrLanguages } from './translate'
 
 const Translate = (source, text, translation) => {
 	if (!source.has(text))
@@ -38,36 +40,44 @@ const getCode = (concept, language, translation) => {
 	if (!lang.has(concept))
 		return null
 
-	const code = lang.get(concept).map((item) =>
-		<Card.Body style={{paddingTop: "0.5rem", paddingBottom: "0.5rem"}}>
-			<Code title={Translate(TrCodeDescriptions, item.title, translation)}
-				code={item.code}
-				language={language} />
-		</Card.Body>
+	const code = lang.get(concept).map((item, id) =>
+		<Code key={id} title={Translate(TrCodeDescriptions, item.title, translation)}
+			code={item.code}
+			language={language} />
 	)
 	return code
 }
 
-const getConcepts = (conceptGroup, filter, translation) => {
-	const languages = ["csharp", "go", "javascript"]
+const getConcepts = (conceptGroup, filter, translation, languages) => {
 	const concepts = conceptGroup.map((concept) =>
 		(filter && concept.includes(filter)) || !filter ?
-		<Card className="mt-1">
-			<Card.Header as="h5">{Translate(TrConcepts, concept, translation)}</Card.Header>
-			<Card.Body>
-				<Row>
-					{languages.map((language) =>
-						<Col>
-							<Card>
-								<Card.Header className="text-center" as="h5">{language}</Card.Header>
-								{getCode(concept, language, translation)}
-							</Card>
-						</Col>
-					)}
-				</Row>
-			</Card.Body>
-		</Card>
-		: null
+			<Card key={concept}>
+				<Card.Header as="h5">{Translate(TrConcepts, concept, translation)}</Card.Header>
+				{languages.size > 1 &&
+					<Card.Body>
+						<Stack direction="horizontal" gap={3} style={{ alignItems: "start" }}>
+							{[...languages].map((language) =>
+								<Col key={language}>
+									<Card>
+										<Card.Header className="text-center" as="h5">{Translate(TrLanguages, language)}</Card.Header>
+										<Card.Body className="py-2">
+											<Stack gap={2}>
+												{getCode(concept, language, translation)}
+											</Stack>
+										</Card.Body>
+									</Card>
+								</Col>
+							)}
+						</Stack>
+					</Card.Body>
+				}
+				{languages.size === 1 &&
+					<Card.Body className="py-2">
+						<Stack gap={2}>{getCode(concept, [...languages][0], translation)}</Stack>
+					</Card.Body>
+				}
+			</Card>
+			: null
 	);
 	return concepts
 }
@@ -82,43 +92,104 @@ function App() {
 	// TODO synonims for search (remove=delete), good-looking lang names (C#)
 	// TODO search in translations
 
-	const [showClearButton, setShowClearButton] = useState(false);
-	const [searchPhrase, setSearchPhrase] = useState("");
-	const [translation, setTranslation] = useState("ru");
+	const [searchPhrase, setSearchPhrase] = useState("")
+	const [translation, setTranslation] = useState("ru")
+	const [languages, setLanguages] = useState(new Set(["javascript"]))
+	const [showMenu, setShowMenu] = useState(false);
 	const inputEl = useRef(null);
-	const allConceptGroups = new Map()
-	allConceptGroups.set("definition", ["constant", "variable"])
-	allConceptGroups.set("loop", ["for"])
-	allConceptGroups.set("bitwise", ["bitwise-xor"])
-	allConceptGroups.set("array", ["array-length", "array-add", "array-remove", "array-includes", "array-index-of"])
-	const conceptGroups = ["definition", "loop", "bitwise", "array"]
-	
-	const listItems = conceptGroups.map((conceptGroup) =>
-		conceptGroup.includes(searchPhrase) || getConceptNumber(allConceptGroups.get(conceptGroup), searchPhrase) > 0 ?
-		<Card className="mt-3">
-			<Card.Header as="h5">{Translate(TrConceptGroups, conceptGroup, translation)}</Card.Header>
-			<Card.Body>
-				{getConcepts(allConceptGroups.get(conceptGroup), conceptGroup.includes(searchPhrase) ? "" : searchPhrase, translation)}
-			</Card.Body>
-		</Card>
-		: null
+
+	const conceptGroups = new Map()
+	conceptGroups.set("definition", ["constant", "variable"])
+	conceptGroups.set("loop", ["for"])
+	conceptGroups.set("bitwise", ["bitwise-xor"])
+	conceptGroups.set("array", ["array-length", "array-add", "array-remove", "array-includes", "array-index-of"])
+
+	const switchLanguage = (language) => {
+		const tmpLanguages = new Set(languages)
+		if (tmpLanguages.has(language)) {
+			tmpLanguages.delete(language)
+		} else {
+			tmpLanguages.add(language)
+		}
+		setLanguages(new Set(tmpLanguages))
+	}
+
+	const listItems = [...conceptGroups.keys()].map((conceptGroup) =>
+		conceptGroup.includes(searchPhrase) || getConceptNumber(conceptGroups.get(conceptGroup), searchPhrase) > 0 ?
+			<Card key={conceptGroup} className="mt-3">
+				<Card.Header as="h5">{Translate(TrConceptGroups, conceptGroup, translation)}</Card.Header>
+				<Card.Body>
+					<Stack gap={3}>
+						{getConcepts(conceptGroups.get(conceptGroup), conceptGroup.includes(searchPhrase) ? "" : searchPhrase, translation, languages)}
+					</Stack>
+				</Card.Body>
+			</Card>
+			: null
 	);
+
+	const listLanguages = ["csharp", "go", "javascript"].map((language) =>
+		<Form.Check
+			key={language}
+			type="checkbox"
+			label={Translate(TrLanguages, language)}
+			checked={languages.has(language)}
+			onChange={() => switchLanguage(language)} />
+	)
+
+	const listTranslations = ["en", "ru"].map((language) =>
+		<Form.Check
+			key={language}
+			type="checkbox"
+			label={Translate(TrInterface, language, translation)}
+			checked={translation === language}
+			onChange={() => setTranslation(language)} />
+	)
+
 	return (
 		<div className="App">
-			<Container>
-				<div style={{ position: "relative" }}
-					onMouseEnter={(e) => setShowClearButton(searchPhrase !== "")}
-					onMouseLeave={(e) => setShowClearButton(false)}>
-					<Form.Control ref={inputEl} value={searchPhrase} onChange={e => setSearchPhrase(e.target.value)} className="mt-3" type="text" placeholder="Search..." />
-					{showClearButton && <Button variant="outline-secondary"
-						onClick={() => { setSearchPhrase("") }}
-						style={{ position: "absolute", top: "0rem", right: "0rem" }}>
-						<X />
+			<Container className="my-3">
+				<Stack direction="horizontal" gap={3}>
+					<InputGroup>
+						<Form.Control
+							variant="danger"
+							type="text"
+							placeholder={Translate(TrInterface, "search", translation)}
+							ref={inputEl}
+							value={searchPhrase}
+							onChange={e => { setSearchPhrase(e.target.value)}}
+						>
+						</Form.Control>
+						<Button variant="outline-secondary" onClick={() => { setSearchPhrase("") }}>
+							<X />
+						</Button>
+					</InputGroup>
+					<Button variant="outline-primary" onClick={() => setShowMenu(true)}>
+						<Gear />
 					</Button>
-					}
-				</div>
+				</Stack>
 				{listItems}
 			</Container>
+			<Offcanvas show={showMenu} placement={"end"} onHide={() => setShowMenu(false)}>
+				<Offcanvas.Header closeButton>
+					<Offcanvas.Title>{Translate(TrInterface, "settings", translation)}</Offcanvas.Title>
+				</Offcanvas.Header>
+				<Offcanvas.Body>
+					<Stack gap={3}>
+						<Card>
+							<Card.Header as="h5">{Translate(TrInterface, "languages", translation)}</Card.Header>
+							<Card.Body>
+								{listLanguages}
+							</Card.Body>
+						</Card>
+						<Card>
+							<Card.Header as="h5">{Translate(TrInterface, "translation", translation)}</Card.Header>
+							<Card.Body>
+								{listTranslations}
+							</Card.Body>
+						</Card>
+					</Stack>
+				</Offcanvas.Body>
+			</Offcanvas>
 		</div>
 	);
 }
