@@ -74,7 +74,7 @@ const getConcepts = (conceptGroup, searchPhrase, translation, languages, hideBlo
 				<Card.Header as="h5">{Translate(TrConcepts, concept, translation)}</Card.Header>
 				{languages.size > 1 &&
 					<Card.Body>
-						<Stack direction="horizontal" gap={3} style={{ alignItems: "start" }}>
+						<Stack direction="horizontal" gap={3} style={{alignItems: "start", overflow: "auto"}}>
 							{[...languages].map((language) => {
 								const code = getCode(concept, language, translation)
 								return code !== null ? <Col key={language}>
