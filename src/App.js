@@ -38,6 +38,8 @@ const getCode = (concept, language, translation) => {
 	if (language === "csharp") lang = csharp;
 	if (language === "go") lang = go;
 	if (language === "javascript") lang = javascript;
+	if (language === "cplusplus") lang = javascript;
+	if (language === "pml") lang = javascript;
 
 	if (!lang.has(concept))
 		return null
@@ -112,6 +114,8 @@ const getConcepts = (conceptGroup, searchPhrase, translation, languages, hideBlo
 
 function App() {
 
+	const maxLanguages = 4
+
 	const [searchPhrase, setSearchPhrase] = useState("")
 	const [showMenu, setShowMenu] = useState(false);
 	const [translation, setTranslation] = useState(localStorage.getItem("translation") || "en")
@@ -163,8 +167,9 @@ function App() {
 	}
 	);
 
-	const listLanguages = ["csharp", "go", "javascript"].map((language) =>
+	const listLanguages = ["csharp", "go", "javascript", "cplusplus", "pml"].map((language) =>
 		<Form.Check
+			disabled={languages.size >= maxLanguages && !languages.has(language)}
 			key={language}
 			type="checkbox"
 			label={Translate(TrLanguages, language)}
@@ -175,7 +180,7 @@ function App() {
 	const listTranslations = ["en", "ru"].map((language) =>
 		<Form.Check
 			key={language}
-			type="checkbox"
+			type="radio"
 			label={Translate(TrInterface, language, translation)}
 			checked={translation === language}
 			onChange={() => setTranslation(language)} />
@@ -234,7 +239,7 @@ function App() {
 							<Card.Header as="h5">{Translate(TrInterface, "miscellaneous", translation)}</Card.Header>
 							<Card.Body>
 								<Form.Check
-									type="checkbox"
+									type="switch"
 									label={Translate(TrInterface, "hide-blocks-without-code", translation)}
 									checked={hideBlocksWithoutCode}
 									onChange={() => setHideBlocksWithoutCode(!hideBlocksWithoutCode)} />
