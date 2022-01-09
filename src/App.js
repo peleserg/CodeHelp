@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
@@ -113,11 +113,23 @@ const getConcepts = (conceptGroup, searchPhrase, translation, languages, hideBlo
 function App() {
 
 	const [searchPhrase, setSearchPhrase] = useState("")
-	const [translation, setTranslation] = useState("ru")
-	const [languages, setLanguages] = useState(new Set(["javascript"]))
 	const [showMenu, setShowMenu] = useState(false);
-	const [hideBlocksWithoutCode, setHideBlocksWithoutCode] = useState(false);
+	const [translation, setTranslation] = useState(localStorage.getItem("translation") || "en")
+	const [languages, setLanguages] = useState(new Set(JSON.parse(localStorage.getItem("languages")) || ["javascript"]))
+	const [hideBlocksWithoutCode, setHideBlocksWithoutCode] = useState(JSON.parse(localStorage.getItem("hideBlocksWithoutCode")) && true);
 	const inputEl = useRef(null);
+
+	useEffect(() => {
+		localStorage.setItem("translation", translation);
+	}, [translation]);
+
+	useEffect(() => {
+		localStorage.setItem("languages", JSON.stringify([...languages]));
+	}, [languages]);
+
+	useEffect(() => {
+		localStorage.setItem("hideBlocksWithoutCode", hideBlocksWithoutCode);
+	}, [hideBlocksWithoutCode]);
 
 	const conceptGroups = new Map()
 	conceptGroups.set("definition", ["constant", "variable"])
