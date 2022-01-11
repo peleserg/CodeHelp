@@ -137,9 +137,16 @@ function App() {
 
 	const conceptGroups = new Map()
 	conceptGroups.set("definition", ["constant", "variable"])
-	conceptGroups.set("loop", ["for"])
+	conceptGroups.set("pointer", ["pointer-definition"])
+	conceptGroups.set("function", ["simple-function", "function-with-arguments", "function-call", "deferred-call"])
+	conceptGroups.set("type", ["type-conversion"])
+	conceptGroups.set("condition", ["if", "if-else", "switch", "switch-fallthrough"])
+	conceptGroups.set("loop", ["for", "while", "infinite-loop"])
 	conceptGroups.set("bitwise", ["bitwise-xor"])
 	conceptGroups.set("array", ["array-length", "array-add", "array-remove", "array-includes", "array-index-of"])
+	conceptGroups.set("io", ["console-import", "console-output"])
+	conceptGroups.set("module", ["module-declaration", "module-import"])
+	conceptGroups.set("project", ["hello-world-console"])
 
 	const switchLanguage = (language) => {
 		const tmpLanguages = new Set(languages)

@@ -9,7 +9,7 @@ CodeDef.set("variable", [{title: "", code:
 CodeDef.set("for", [{title: "", code: 
 `for (int i = 0; i < 10; i++)
 {
-	// some code
+	
 }`}]);
 
 CodeDef.set("array-length", [{title: "", code: 
