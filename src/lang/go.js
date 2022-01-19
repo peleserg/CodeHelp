@@ -1,9 +1,9 @@
 const CodeDef = new Map();
 
-CodeDef.set("constant", [{title: "", code: 
+CodeDef.set("constant-definition", [{title: "", code: 
 `const i = 42`}]);
 
-CodeDef.set("variable", [{title: "", code: 
+CodeDef.set("variable-definition", [{title: "", code: 
 `var i int = 42`},
 {title: "", code: 
 `var i int
@@ -16,6 +16,12 @@ i = 42`},
 `var i, j, s = 1, 2, "Hello"`},
 {title: "", code: 
 `i, j, s := 1, 2, "Hello"`}]);
+
+CodeDef.set("pointer-definition", [{title: "", code: 
+`var p *int = &integerVariable`}]);
+
+CodeDef.set("pointer-dereferencing", [{title: "", code: 
+`*p = 21`}]);
 
 CodeDef.set("type-conversion", [{title: "", code: 
 `var f float64 = float64(intValue)`},

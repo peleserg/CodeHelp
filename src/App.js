@@ -136,8 +136,10 @@ function App() {
 	}, [hideBlocksWithoutCode]);
 
 	const conceptGroups = new Map()
-	conceptGroups.set("definition", ["constant", "variable"])
-	conceptGroups.set("pointer", ["pointer-definition"])
+	conceptGroups.set("variable", ["variable-definition"])
+	conceptGroups.set("constant", ["constant-definition"])
+	conceptGroups.set("pointer", ["pointer-definition", "pointer-dereferencing"])
+	conceptGroups.set("struct", ["struct-definition", "struct-using", "struct-field"])
 	conceptGroups.set("function", ["simple-function", "function-with-arguments", "function-call", "deferred-call"])
 	conceptGroups.set("type", ["type-conversion"])
 	conceptGroups.set("condition", ["if", "if-else", "switch", "switch-fallthrough"])

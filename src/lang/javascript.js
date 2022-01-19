@@ -1,9 +1,9 @@
 const CodeDef = new Map();
 
-CodeDef.set("constant", [{title: "", code: 
+CodeDef.set("constant-definition", [{title: "", code: 
 `const i = 42`}]);
 
-CodeDef.set("variable", [{title: "", code: 
+CodeDef.set("variable-definition", [{title: "", code: 
 `var i = 42`},
 {title: "javascript-variable-let", code: 
 `let i = 42`}]);
